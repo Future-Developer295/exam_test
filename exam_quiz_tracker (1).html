@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam Practice Quiz + Progress Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--bg:#eef2ff;--card:#fff;--tx:#1e1b3a;--mut:#667085;--pri:#6366f1;--pri2:#8b5cf6;--acc:#f59e0b;--ok:#16a34a;--okb:#dcfce7;--bad:#dc2626;--badb:#fee2e2;--bd:#dfe3f5;--shadow:0 4px 14px rgba(99,102,241,.12)}
+:root[data-theme="dark"]{--bg:#0e1124;--card:#181c36;--tx:#eef0ff;--mut:#a3a9c9;--pri:#6d6ef0;--pri2:#9a6cf5;--acc:#fbbf24;--okb:#0f3321;--badb:#40181c;--bd:#2a2f55;--shadow:0 4px 14px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.w{max-width:720px;margin:0 auto;padding:18px}
+h1{font-size:1.5rem;margin:.3em 0}h3{margin:1.2em 0 .4em}p{color:var(--mut);margin:.3em 0 1em}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+button,select{font:inherit;color:var(--tx)}
+button{cursor:pointer;border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:12px 14px;width:100%;text-align:left;margin-top:8px}
+button:disabled{opacity:.6;cursor:default}
+button.p{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border-color:transparent;text-align:center;font-weight:600}
+button.d{color:var(--bad);text-align:center}
+select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--card);margin:4px 0 12px}
+label{font-size:.85rem;color:var(--mut);display:block}.ck{display:flex;gap:8px;align-items:center;color:var(--tx);margin-bottom:6px}
+.nav{display:flex;gap:8px}.nav button{margin:0;text-align:center;font-weight:600}.nav button.a{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border-color:transparent}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.t{padding:4px 12px;border-radius:99px;background:var(--pri);color:#fff;font-variant-numeric:tabular-nums}.t.low{background:var(--bad)}
+.bar{height:6px;background:var(--bd);border-radius:9px;margin:10px 0 14px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--acc))}
+.q{font-size:1.08rem;font-weight:600;margin:0 0 6px}
+.ok{background:var(--okb)!important;border-color:var(--ok)!important}.bad{background:var(--badb)!important;border-color:var(--bad)!important}.sel{border-color:var(--pri)!important;box-shadow:0 0 0 2px var(--pri) inset}
+.fb{margin-top:10px;font-weight:600}.sc{font-size:2.6rem;font-weight:800;text-align:center;margin:6px 0}
+.r{font-size:.92rem;border-left:4px solid var(--bad);padding-left:10px;margin:12px 0}.r em{color:var(--ok);font-style:normal;font-weight:600}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}.g b{display:block;font-size:1.4rem}.g span{font-size:.75rem;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:left}
+.up{color:var(--ok);font-weight:700}.dn{color:var(--bad);font-weight:700}
+button i{margin-right:6px}.t i{margin-right:4px}
+.noselect{user-select:none;-webkit-user-select:none}
+.warn{background:var(--badb);border:1px solid var(--bad);border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:.92rem}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.brand{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+button.ic{width:auto;margin:0;padding:8px 13px;border-radius:99px;text-align:center}button.ic i{margin:0}
+.mot{background:linear-gradient(135deg,#f59e0b,#f43f5e);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-weight:600}
+footer{text-align:center;color:var(--mut);margin:26px 0 8px;font-size:.9rem}footer b{color:var(--tx)}
+</style></head><body>
+<div class="w"><div class="topbar"><span class="brand"><i class="fa-solid fa-graduation-cap"></i> Exam Prep</span><span style="display:flex;gap:8px"><button id="lg" class="ic" onclick="toggleLang()" title="Language"></button><button id="tg" class="ic" onclick="toggleTheme()" title="Dark / Light mode"></button></span></div><div class="nav"><button id="n1" onclick="home()"><i class="fa-solid fa-pen-to-square"></i>Quiz</button><button id="n2" onclick="prog()"><i class="fa-solid fa-chart-line"></i>Progress</button></div><div id="app"></div><footer>Made with <i class="fa-solid fa-heart" style="color:#ef4444"></i> by <b>Asim Khan</b></footer></div>
+<script>
+function applyTheme(t){document.documentElement.setAttribute("data-theme",t);const b=document.getElementById("tg");if(b)b.innerHTML=t==="dark"?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>'}
+function toggleTheme(){const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";try{localStorage.setItem("examQuizTheme",t)}catch(x){}applyTheme(t)}
+(function(){let t=null;try{t=localStorage.getItem("examQuizTheme")}catch(x){}if(!t)t=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";applyTheme(t)})();
+let lang="ur";try{lang=localStorage.getItem("examQuizLang")||"ur"}catch(x){}
+const L={
+en:{title:"Exam Practice Quiz",sub:"Choose a paper, set the time and start. Every attempt is saved on your computer.",paper:"Paper",count:"Number of questions",all:"All",time:"Time (minutes)",min:"min",weak:"Only questions I got wrong last time",start:"Start",qs:"questions",none:"No questions found",dlp:"Download this paper (with answers)",rulesB:"Rules:",rulesT:"Switching tab or window during the quiz ends the paper immediately. Copy/paste and right-click are disabled.",mixed:"All papers (mixed)",quiz:"Quiz",prog:"Progress",multi:"Multiple answers",submit:"Submit answer",right:"Correct!",wrong:"Wrong! Correct answer: ",next:"Next",fin:"Finish",leave:"Leave the quiz? This attempt will not be saved.",result:"Result",tabw:"Tab/window switch detected, so the paper was ended.",m90:"Outstanding! You are doing top class!",m70:"Very good! A little more effort and 90% is within reach.",m50:"Good try! Review the wrong questions and try again.",m0:"Don't give up! Every attempt makes you better.",cmp:(p,a,b,d)=>`Last time (${p}): ${a}% → now ${b}% ${d}`,first:"This is your first attempt on this paper.",timeUp:" (time up)",tm:"Time",bad:n=>`Wrong / skipped (${n})`,yours:"Your answer: ",skipped:"— (not attempted)",correct:"Correct: ",perfect:"Perfect score!",dlr:"Download this paper (with answers)",again:"Try again",seeProg:"View progress",newQ:"New quiz",pf:"Paper filter",allP:"All papers",att:"Attempts",avg:"Average",best:"Best",last:"Last",impNeed:"You need at least 2 attempts to see improvement.",imp:(k,a,b,d)=>`Average of your first ${k} attempts <b>${a}%</b> → average of your latest ${k} attempts <b>${b}%</b> <span class="${d>=0?"up":"dn"}">(${d>=0?"+":""}${d}%)</span>`,streak:n=>`Streak: <b>${n} days</b> of practice in a row`,recent:"Recent attempts",date:"Date",score:"Score",weakH:"Weak questions (wrong last time)",wr:(w,r)=>`${w} times wrong · ${r} times right`,pw:"Practice weak questions",dlw:"Download weak questions guess paper",reset:"Reset all data",resetC:"All saved data will be deleted. Sure?",resT:"Quiz result - ",weakT:" - Weak questions guess paper",pracT:" - Practice paper",print:"Print / Save as PDF",yourA:" (your answer)",sumRes:(s,n,p)=>`Score: ${s}/${n} (${p}%). Correct answers in green, your wrong answers in red.`,sumPool:n=>`${n} questions. Correct answers in green.`,
+ quotes:["Small efforts add up to big results.","Today's hard work is tomorrow's success.","Every wrong answer is a new lesson, keep learning!","Consistency beats talent.","The more you practice, the more confident you get.","You can do it, just start!"]},
+ur:{title:"Exam Practice Quiz",sub:"Paper chuno, time set karo aur start karo. Har attempt tumhare computer mein save hota hai.",paper:"Paper",count:"Kitne sawal",all:"Sab",time:"Time (minutes)",min:"min",weak:"Sirf wo sawal jo pichli baar galat huay",start:"Start",qs:"sawal",none:"Koi sawal nahi mila",dlp:"Ye paper download karo (answers ke saath)",rulesB:"Rules:",rulesT:"Quiz ke dauran tab ya window switch karne par paper foran end ho jayega. Copy/paste aur right-click band hain.",mixed:"All papers (mixed)",quiz:"Quiz",prog:"Progress",multi:"Multiple answers",submit:"Submit answer",right:"Sahi jawab!",wrong:"Galat! Sahi jawab: ",next:"Next",fin:"Finish",leave:"Quiz beech mein chhor doge? Ye attempt save nahi hoga.",result:"Result",tabw:"Tab/window switch detect hua, isliye paper end kar diya gaya.",m90:"Zabardast! Tum top class ja rahe ho!",m70:"Bohot acha! Thodi si mehnat aur, aur 90% door nahi.",m50:"Achi koshish! Galat sawal dekho aur dobara try karo.",m0:"Haar mat mano! Har attempt tumhe behtar banata hai.",cmp:(p,a,b,d)=>`Pichli baar (${p}): ${a}% → ab ${b}% ${d}`,first:"Ye is paper ka pehla attempt hai.",timeUp:" (time up)",tm:"Time",bad:n=>`Galat / chhode huay (${n})`,yours:"Tumhara jawab: ",skipped:"— (attempt nahi kiya)",correct:"Sahi: ",perfect:"Perfect score!",dlr:"Ye paper download karo (answers ke saath)",again:"Dobara try karo",seeProg:"Progress dekho",newQ:"Naya quiz",pf:"Paper filter",allP:"All papers",att:"Attempts",avg:"Average",best:"Best",last:"Last",impNeed:"Improvement dekhne ke liye kam az kam 2 attempts chahiye.",imp:(k,a,b,d)=>`Pehle ${k} attempts ka average <b>${a}%</b> → ab ke ${k} attempts ka average <b>${b}%</b> <span class="${d>=0?"up":"dn"}">(${d>=0?"+":""}${d}%)</span>`,streak:n=>`Streak: <b>${n} din</b> lagatar practice`,recent:"Recent attempts",date:"Date",score:"Score",weakH:"Weak questions (pichli baar galat)",wr:(w,r)=>`${w} baar galat · ${r} baar sahi`,pw:"Weak questions practice karo",dlw:"Weak questions ka guess paper download karo",reset:"Saara data reset karo",resetC:"Saara saved data delete ho jayega. Pakka?",resT:"Quiz result - ",weakT:" - Weak questions guess paper",pracT:" - Practice paper",print:"Print / Save as PDF",yourA:" (tumhara jawab)",sumRes:(s,n,p)=>`Score: ${s}/${n} (${p}%). Sahi jawab hare mein, tumhare galat jawab laal mein.`,sumPool:n=>`${n} sawal. Sahi jawab hare mein.`,
+ quotes:["Chhoti chhoti koshishen hi bade results banati hain.","Aaj ki mehnat hi kal ki kamyabi hai.","Har galat jawab ek naya sabaq hai, seekhte raho!","Consistency talent se zyada powerful hoti hai.","Jitna practice karoge, utne confident hoge.","Tum kar sakte ho, bas shuru karo!"]}};
+const T=(k,...a)=>{const v=L[lang][k];return typeof v==="function"?v(...a):v};
+const qi=Math.floor(Math.random()*6);
+function setLabels(){document.getElementById("n1").innerHTML='<i class="fa-solid fa-pen-to-square"></i>'+T("quiz");document.getElementById("n2").innerHTML='<i class="fa-solid fa-chart-line"></i>'+T("prog");document.getElementById("lg").innerHTML='<i class="fa-solid fa-language"></i> '+(lang==="en"?"Roman Urdu":"English");document.title=T("title")}
+function toggleLang(){lang=lang==="en"?"ur":"en";try{localStorage.setItem("examQuizLang",lang)}catch(x){}setLabels();if(S&&S.fin)rend();else if(S&&S.iv)show();else if(view==="prog")prog();else home()}
+const D={
+"CMS Exam":[
+["Why might a business with complex content requirements prefer Drupal over WordPress?",["Drupal has fewer security updates","Drupal offers simpler customization in every case","Drupal supports complex content structuring and scalability","Drupal is easier for all beginners"],2],
+["Which PHP setting directly limits the size of an individual file uploaded through WordPress?",["memory_limit","upload_max_filesize","max_execution_time","post_max_size"],1],
+["Which services should be started in XAMPP for a standard local WordPress install?",["Apache and PHP","Apache and MySQL","MySQL and FileZilla","PHP and Perl"],1],
+["Which default WordPress role can manage and publish posts, including others’ posts, without full admin rights?",["Administrator","Editor","Author","Contributor"],1],
+["Which was the first default WordPress block theme for full site editing?",["Twenty Nineteen","Twenty Twenty","Twenty Twenty-Two","Twenty Seventeen"],2],
+["Which collation supports the full Unicode range, including emoji?",["utf8_unicode_ci","utf8_general_ci","latin1_swedish_ci","utf8mb4_unicode_ci"],3],
+["Which WordPress file commonly contains database connection settings?",["style.css","robots.txt","license.txt","wp-config.php"],3],
+["Which directory normally stores installed plugins?",["wp-content/plugins","wp-includes/uploads","wp-content/database","wp-admin/themes"],0],
+["Why is a child theme useful?",["It removes the need for parent theme files","It replaces the database with static files","It rewrites all plugins","It preserves customizations when the parent theme is updated"],3],
+["Default distinction between categories and tags?",["Categories can be hierarchical; tags are not","Both are permission levels","Tags can have parents; categories cannot","Categories apply only to images; tags only to pages"],0],
+["Which default role can write and manage its own posts but cannot publish them?",["Administrator","Author","Contributor","Editor"],2],
+["What does the principle of least privilege mean?",["Remove passwords from limited accounts","Use one shared admin account","Give everyone admin access","Give each user only the permissions needed for their tasks"],3],
+["What is the main purpose of a staging website?",["Replace all backups","Test changes in a separate environment before applying to the live site","Display database passwords","Prevent editors from previewing"],1],
+["What distinguishes a headless CMS?",["Visitors edit the database directly","It delivers content through APIs for a separate presentation layer","It cannot store text or media","It removes permission management"],1],
+["Which Drupal core tool builds configurable lists of content, like latest articles?",["File upload settings","Media Library","User registration","Views"],3],
+["Which themes does the WordPress Theme Repository primarily offer?",["Premium","Free","Custom","Paid"],1],
+["Why might Drupal suit a small business with simple needs and nontechnical staff less?",["Resource use always too high","Steeper learning curve for non-developers","Fewer content types","No community support"],1],
+["Which plugin type helps optimize a site for search engine visibility?",["E-commerce","Security","SEO","Backup"],2],
+["Which CMS feature is designed to improve search engine visibility?",["Content tags","SEO tools","Version control","User roles"],1],
+["Primary purpose of WordPress security plugins?",["Improve SEO","Protect from malware and unauthorized access","Create contact forms","Enable e-commerce"],1],
+["Which practice leaves a CMS vulnerable despite regular updates?",["Unchanged default admin credentials","Advanced content taxonomies","Maintained custom theme from trusted developer","Using a WYSIWYG editor"],0],
+["Which command installs Apache HTTP Server as a Windows service?",["httpd.exe -k install","apache.exe -start","install.exe apache-service","service start apache"],0],
+["Which theme element is a functional content component, not basic styling?",["Color scheme","Typography","Widgets","Graphics"],2],
+["Minimum MySQL version in WordPress.org recommended requirements?",["MySQL 5.7","MySQL 8.0","MySQL 8.3","MySQL 8.4.x"],1],
+["What does CMS stand for?",["Computer Maintenance Software","Content Mapping Service","Content Management System","Central Media Server"],2],
+["Primary benefit of using a CMS?",["Maintenance and security vanish automatically","Editors manage content through an admin interface","Database becomes unnecessary","Every change must be compiled"],1],
+["WordPress is primarily written in which language?",["PHP","Java","Python","C#"],0],
+["Where are posts, users and settings stored?",["MySQL or MariaDB database","Visitor’s browser cache","Apache executable","Theme stylesheet"],0],
+["Usual distinction between a theme and a plugin?",["Theme stores DB records; plugin stores passwords","Theme controls presentation; plugin extends functionality","Theme configures DNS; plugin registers domain","Theme is a DB engine; plugin a web server"],1],
+["After installing a plugin, what normally enables it?",["Delete wp-config.php","Convert pages to posts","Rename the domain","Activate the plugin"],3],
+["Which content type suits a timeless About Us section?",["Page","User profile","Post category","Media caption"],0],
+["What is a post slug?",["Number of attached images","DB server port","URL-friendly identifier in its address","Author’s password"],2],
+["What do permalink settings control?",["URL structure of content","Number of users who can log in","PHP memory","DB admin password"],0],
+["Which area manages uploaded images, audio and documents?",["Media Library","Permalink settings","Plugin Editor","Users screen"],0],
+["Main purpose of meaningful alt text?",["Encrypt the image","Replace image compression","Convey meaning to users who cannot see it","Increase pixel size"],2],
+["What does saving a post as draft do?",["Keeps it unpublished for further editing","Makes it the homepage","Deletes all revisions","Publishes immediately"],0],
+["How to publish a post at a future time?",["Move image to another folder","Set a future date and schedule it","Change author display name","Assign different collation"],1],
+["Which feature compares and restores earlier versions of a post?",["Revisions","Permalinks","Theme activation","User registration"],0],
+["Which role publishes and manages only their own posts?",["Author","Subscriber","Contributor","Editor"],0],
+["Which role suits a registered reader managing only their profile?",["Editor","Author","Administrator","Subscriber"],3],
+["What should a recoverable WordPress backup include?",["Only theme name","Database and site files, including uploads","Homepage screenshot","Browser cookies"],1],
+["Why keep core, themes and plugins updated?",["Removes need for backups","Fixes security vulnerabilities, bugs, compatibility issues","Disables unauthorized logins","Guarantees first place in search"],1],
+["Most useful factor when evaluating a plugin?",["Icon colors","Title contains “ultimate”","Maintenance history, compatibility, trusted source","Longest filename"],2],
+["What does HTTPS protect at sign-in?",["Data between browser and server","All comment spam","Plugin programming errors","Files from deletion by admin"],0],
+["How does multi-factor authentication help?",["Disables authentication","Stores passwords on public pages","Requires extra verification beyond the password","Shares one password"],2],
+["Which measure reduces automated password guessing?",["Publish admin username in footer","Remove category descriptions","Increase upload size","Rate limiting repeated login attempts"],3],
+["How does page caching improve performance?",["Serves reusable generated output instead of rebuilding each request","Deletes unpublished posts","Converts passwords to images","Increases DB queries"],0],
+["Which action reduces image transfer size?",["Upload largest resolution","Convert text to screenshots","Duplicate images on pages","Compress and serve appropriately sized versions"],3],
+["What does a responsive theme provide?",["DB that needs no maintenance","Layouts that adapt to screen sizes","Fixed-width layouts everywhere","Admin access for visitors"],1],
+["Why check internal links after changing URL structure?",["URL changes remove images","Only admin can view URLs","Links become encrypted","Old links may break unless updated or redirected"],3],
+["Purpose of an XML sitemap?",["Guarantee first rank","Store typography settings","Help search engines discover content URLs","Assign user passwords"],2],
+["Which approach gives access control for confidential staff page?",["Unguessable title","Remove from menu","robots.txt disallow","Require authentication and restrict to authorized users"],3],
+["Common use of a CMS content API?",["Let an authorized external app retrieve or update content","Block all access to content","Change server location","Replace users with a domain"],0],
+["In Drupal, what does a content type define?",["DB password policy","Color depth of images","Structure and fields for a category of content, e.g. Event","Required browser version"],2],
+["A Drupal Event needs a start date. What to add?",["A date field","Separate theme per event","New admin role per date","DB password per event"],0],
+["Main purpose of taxonomy in Drupal?",["Compile PHP to JavaScript","Classify content using terms and vocabularies","Replace fields with images","Configure server memory"],1],
+["Primary role of a Drupal module?",["DB engine","Replace the browser","Add or extend functionality","Define only the color palette"],2],
+["What can Drupal Content Moderation and Workflows implement?",["States and transitions like Draft, Review, Published","All visitors become admins","Deletion after each edit","Auto-approval without review"],0],
+["Which capability matters when an article is kept in several languages?",["Login rate limiting","DB query logging","Image cropping","Content translation and multilingual management"],3],
+["Which task helps when migrating a CMS site to a new server?",["Reuse old DB credentials unchecked","Copy only homepage screenshot","Delete uploaded media first","Transfer files and DB, then verify configuration, URLs, permissions"],3]],
+"Laravel Exam":[
+["Which Eloquent property lists attributes that may be mass assigned?",["$fillable","$rows","$columns","$fields"],0],
+["Which Eloquent method retrieves a record by primary key?",["retrieve()","find()","all()","get()"],1],
+["Blade master layouts use ____ and child templates use ____.",["expression and custom","namespace and functions","yield and section","array and list"],2],
+["Which controller type gets standard CRUD methods via one Artisan command?",["Single action controller","Moderate controller","Resource controller","Class view"],2],
+["Which Artisan command generates a model named Product?",["php artisan create:table Product","php artisan model Product","php artisan make:model Product","php artisan new:model Product"],2],
+["Which command lists registered routes?",["php artisan list:urls","php artisan route:show-all","php artisan route:list","php artisan routes"],2],
+["Which resource controller method stores a newly created resource?",["show()","index()","store()","create()"],2],
+["Where are Blade templates normally stored?",["routes/templates","database/views","resources/views","app/templates"],2],
+["Which Blade directive inserts another view into the current template?",["@extends","@section","@include","@yield"],2],
+["Which Eloquent method eager loads relationships?",["where()","with()","groupBy()","orderBy()"],1],
+["Purpose of a migration’s down() method?",["Create a Blade view","Reverse the schema changes made by up()","Start the dev server","Download all records"],1],
+["Main purpose of composer.lock?",["Record resolved dependency versions for reproducible installs","Define the HTML layout","Prevent running Composer","Encrypt source files"],0],
+["Default behavior of Blade’s {{ $value }}?",["Renders unescaped HTML","Deletes the value","HTML-escapes the value before displaying","Executes it as SQL"],2],
+["Which Blade directive inserts a hidden CSRF token field?",["@secureForm","@tokenize","@session","@csrf"],3],
+["Authentication vs authorization?",["Authentication decides permissions; authorization checks identity","Authentication checks identity; authorization determines permitted actions","Authorization creates a user account","Both mean database migration"],1],
+["Which item gives key-based authentication to a Homestead VM?",["Virtual environment","PHP binaries","Windows tools","SSH keys"],3],
+["GNU GPL information relates to installing which tool?",["Composer","Vagrant","Homestead","Git Bash (Git for Windows)"],3],
+["One advantage of Laravel query builder over manual SQL?",["It is rich in features","Generates SQL suited to the database driver","Has a few SQLite directives","Uses configuration mode for migration"],1],
+["____ divides database records into pages for display.",["Validation","Pagination","Routing","Authentication"],1],
+["Which variable supplies new values? $data=['name'=>'Ali']; $user->update($data);",["$data","$update","$revoke","$edit"],0],
+["A ____ provides reusable structure and tools for developing, testing, deploying apps.",["Template engine","Web engine","Framework","Script"],2],
+["Which tool generates controllers and models following conventions?",["Artisan tool","PHP code","Laravel components","Composer"],0],
+["Which Laravel ORM implements CRUD with model classes?",["Routes","Eloquent ORM","Operators","DB query builder class"],1],
+["Assigning many attributes at once from an array is called ____.",["Attribute","Mass assignment","Static controller","Mighty model"],1],
+["Which command shows the Composer version?",["GitBash","ssh","composer --version","install"],2],
+["Best description of collection method chaining?",["Calling successive methods on returned collections in one expression","Defining ID column in migration","Conventions over configuration","Accessing values after retrieval"],0],
+["Which command shows the Laravel framework version?",["php laravel --check","composer laravel-version","php artisan --version","php artisan php-version"],2],
+["Which resource controller method displays a particular resource?",["store()","destroy()","index()","show()"],3],
+["What does implicit route model binding do?",["Creates a table per route","Resolves a route parameter into the Eloquent model","Converts requests to POST","Removes primary keys"],1],
+["Main purpose of the service container?",["Render CSS in Blade","Replace route definitions","Resolve dependencies and manage dependency injection","Store images in DB"],2],
+["Which helper returns a view response?",["renderBlade()","view()","template()","page()"],1],
+["Which Blade directive checks for a field’s validation error?",["@validate","@failed","@invalid","@error"],3],
+["Main purpose of a database seeder?",["Encrypt model attributes","Populate tables with initial or sample data","Compile Blade","Define route names"],1],
+["Which file declares Composer dependencies?",["package.xml","artisan.json","dependencies.php","composer.json"],3],
+["What does MVC stand for?",["Module-Variable-Component","Method-Value-Command","Main-View-Class","Model-View-Controller"],3],
+["Which file holds browser-facing web routes?",["public/web.php","resources/routes.blade.php","routes/web.php","app/routes.php"],2],
+["Which method registers a GET route?",["Route::post()","Route::get()","Route::delete()","Route::put()"],1],
+["A controller’s main role?",["Replace DB server","Handle requests and coordinate logic and responses","Store records in a class file","Compile CSS"],1],
+["Which command generates ProductController?",["php artisan new:route ProductController","php artisan create ProductController","php artisan controller ProductController","php artisan make:controller ProductController"],3],
+["What does an Eloquent model represent?",["CSS styles","Web server config","Compiled JS bundle","Entity mapped to a database table"],3],
+["Primary purpose of a migration?",["Render Blade","Transfer users to another site","Version and apply schema changes","Replace backups"],2],
+["Which command runs outstanding migrations?",["php artisan view:clear","php artisan migrate","php artisan route:list","php artisan migrate:rollback"],1],
+["Usual role of the .env file?",["Environment-specific configuration values","Migration classes","Blade components","Compiled HTML"],0],
+["Which directive names the parent layout?",["@layout","@extends","@parentLayout","@include"],1],
+["Which directive loops over a collection?",["@foreach","@iterate","@loop","@repeat"],0],
+["Laravel middleware is commonly used for?",["CSS utilities","Generating tables","Inspecting or filtering requests before or after handling","Replacing PHP"],2],
+["Purpose of validating request data?",["Make visitors admins","Avoid defining requirements","Convert input to primary keys","Check data satisfies rules before use"],3],
+["Which method: a user has many posts?",["hasMany()","belongsToManyOnly()","belongsTo()","hasOne()"],0],
+["Which method: a post belongs to one user?",["hasMany()","contains()","ownsMany()","belongsTo()"],3],
+["Which query builder method adds a basic condition?",["selectIf()","condition()","where()","filterBy()"],2],
+["Which method returns the first match or null?",["all()","get()","first()","count()"],2],
+["If findOrFail($id) finds nothing?",["Returns all records","Throws model-not-found exception","Creates empty record","Deletes the key"],1],
+["What does Product::create($attributes) do?",["Inserts a record and returns the new model","Updates every product","Only defines schema","Only returns an unexecuted query"],0],
+["Which method persists changes to a model instance?",["commitModel()","storeOnly()","persistAll()","save()"],3],
+["Which method deletes a model instance (no soft deletes)?",["removeRow()","eraseModel()","dropTable()","delete()"],3],
+["Which method returns a paginator?",["first()","paginate()","all()","find()"],1],
+["Which method orders returned records?",["having()","groupBy()","orderBy()","select()"],2],
+["With a valid composer.lock, composer install does what?",["Installs versions recorded in the lock file","Updates all to newest","Creates a controller","Deletes dependencies"],0],
+["Which command starts the local dev server?",["php artisan build:server","php artisan serve","php artisan web:start","php artisan host"],1],
+["Why name a route?",["Force POST","Generate URLs and redirects with a stable identifier","Remove need for a controller","Store route in a DB table"],1]],
+"Semester End Exam":[
+["Which key maintains uniqueness in a table?",["Candidate","Composite","Foreign","Primary"],3],
+["What is the file extension for XML files?",[".html",".xml",".txt",".json"],1],
+["Which feature does the Twenty Twenty-Two theme support?",["Full Site Editing (FSE)","JavaScript animations","PHP coding","RSS feeds"],0],
+["How does extends support inheritance in JavaScript classes?",["Lets a class inherit properties and methods from another class","Prevents child classes from modifying properties","Forces implementing all methods of another class","Converts a function into a class"],0],
+["Which JavaScript feature quickly extracts values from objects and arrays?",["Optional Chaining","Destructuring","Nullish Coalescing","Spread Operator"],1],
+["Which DDL command restructures database objects?",["CREATE","ALTER","DROP","TRUNCATE"],1],
+["Which feature combines data from more than one table?",["MySQL JOIN","MySQL LINK","MySQL RET","MySQL ADD"],0],
+["How does CommonJS differ from ES Modules?",["CommonJS uses require(), ES Modules use import","CommonJS allows only one export per file","ES Modules cannot be used in Node.js","CommonJS runs only in browsers"],0],
+["Which keyword defines a class in JavaScript?",["object","function","class","define"],2],
+["Why is HTTPS important for a WordPress server, and what gives a free SSL certificate?",["Server speed; Apache","Database connections; MySQL","Secure data transmission; Let’s Encrypt","SEO rankings; Google Search Console"],2],
+["Which regex symbol matches any single character except a newline?",["*","^",".","$"],2],
+["What is the primary role of WordPress themes?",["Provide plugins","Enhance SEO","Control design and layout","Handle user authentication"],2],
+["What refers to storing data twice or duplicating data?",["Drop","Foreign Key","Redundancy","Index"],2],
+["What is the top-level node in the XML DOM hierarchy?",["Element node","Attribute node","Root element node","Text node"],2],
+["What is the time the database takes to respond to a query called?",["Employment Time","Execution Time","Time Travel","Working Mechanism"],1],
+["Which tool reads, examines and comprehends XML documents?",["XML Parser","APIs","DOM Tree","SAX"],0],
+["Which MySQL version is suggested for WordPress?",["MySQL 5.7","MySQL 8.0","MySQL 8.3","MySQL 8.4.x"],1],
+["Which single-row operator checks for values less than the subquery result?",["Less Than (<)","Equal To (=)","More Than (>)","Less Than or Equal To (<=)"],0],
+["Which schema language still benefits straightforward XML and stays popular?",["DTD","XSD","Both equally popular","Neither is popular"],0],
+["What does OOP help achieve in JavaScript?",["Faster execution","Structuring code using objects and classes","Eliminating functions","Running JS without a browser"],1],
+["Role of the call stack in the event loop?",["Stores function calls in execution order","Handles background API requests","Manages async tasks only","Queues microtasks"],0],
+["A table with two or more independent entities is in ____.",["3NF","BCNF","4NF","6NF"],2],
+["Which theme first fully adopted the block-based editor?",["Twenty Nineteen","Twenty Twenty","Twenty Twenty-Two","Twenty Seventeen"],2],
+["Which query shows results based on user conditions?",["SELECT","SET","DISPLAY","QUERY"],0],
+["Benefits of query optimization?",["Improves execution speed","Aids management","Reduces hardware cost","All of these"],3],
+["How are DTDs commonly created?",["Specialized DTD software","Complex programming languages","Basic text editors","GUI"],2],
+["Which command installs Apache as a service on Windows?",["httpd.exe -k install","apache.exe -start","install.exe apache-service","service start apache"],0]]
+};
+// Multiple-answer questions: [question, options, [correct indexes]]
+D["Semester End Exam"].push(
+["What are some advantages of XML Schema (XSD) over DTD? (Select all that apply)",["XSD supports more complex content models","XSD has stronger support for namespaces","XSD allows for more extensibility","DTD is more efficient in processing speed"],[0,1,2]],
+["What does Object.fromEntries() do? (Select all that apply)",["Converts an object into a Map","Converts a Map into a plain object","Takes an iterable of key-value pairs and returns a new object","Creates an object with default values"],[1,2]],
+["Which tasks can an XML parser perform? (Select all that apply)",["Parsing","Validation","Data retrieval","Code compilation"],[0,1,2]],
+["What problems do circular dependencies cause in JavaScript modules? (Select all that apply)",["Infinite loops and initialization issues","Errors that are difficult to debug","They allow multiple inheritance","They force all modules to load at once"],[0,1]],
+["Which of these are NoSQL databases? (Select all that apply)",["MySQL","Oracle Database","MongoDB","Cassandra"],[2,3]],
+["What does the XML Document Prolog typically contain? (Select all that apply)",["XML Declaration","Document Type Declaration","Metadata","Start and End Tags"],[0,1]],
+["Why is modularization important in large JavaScript apps? (Select all that apply)",["Separates concerns and improves maintainability","Increases execution speed","Prevents use of ES6+ features","Easier debugging and maintenance"],[0,3]],
+["The filter() method is used for... (Select all that apply)",["Enabling data manipulation and transformation","Selecting users whose active property is true","Working with nested data more simply","Mapping structures get difficult"],[0,1,2]]);
+const KEY="examQuizTracker_v1",ALL="*",app=document.getElementById("app");
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.h&&d.s)return d}catch(x){}return{h:[],s:{}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(x){}}
+let DB=load(),S=null,view="home",cfg={p:Object.keys(D)[0],n:15,m:15,w:false},pf=ALL;
+const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const fm=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const pn=p=>p===ALL?T("mixed"):p;
+const msg=p=>p>=90?T("m90"):p>=70?T("m70"):p>=50?T("m50"):T("m0");
+function streak(){const d=new Set(DB.h.map(h=>new Date(h.t).toDateString()));let c=0,x=new Date();if(!d.has(x.toDateString()))x.setDate(x.getDate()-1);while(d.has(x.toDateString())){c++;x.setDate(x.getDate()-1)}return c}
+function nav(n){document.getElementById("n1").className=n==1?"a":"";document.getElementById("n2").className=n==2?"a":""}
+function stop(){if(S&&S.iv)clearInterval(S.iv)}
+function leave(){if(S&&!S.fin){S.ign=true;const c=confirm(T("leave"));setTimeout(()=>{if(S)S.ign=false},600);if(!c)return false}stop();S=null;document.body.classList.remove("noselect");return true}
+function cheat(){if(S&&S.iv&&!S.fin&&!S.ign)finish("tab")}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)cheat()});
+window.addEventListener("blur",cheat);
+["contextmenu","copy","cut","paste"].forEach(ev=>document.addEventListener(ev,x=>{if(S&&!S.fin)x.preventDefault()}));
+window.addEventListener("beforeunload",x=>{if(S&&!S.fin){x.preventDefault();x.returnValue=""}});
+function pool(p=cfg.p,wk=cfg.w){const ks=p===ALL?Object.keys(D):[p];let r=[];ks.forEach(k=>D[k].forEach((x,i)=>r.push({k,i,x})));
+ if(wk)r=r.filter(o=>{const s=DB.s[o.k+"#"+o.i];return s&&s.l===0});return r}
+function opt(list,cur){return list.map(v=>`<option value="${v[0]}" ${String(v[0])===String(cur)?"selected":""}>${v[1]}</option>`).join("")}
+function home(){if(!leave())return;view="home";nav(1);const n=pool().length,cnt=cfg.n?Math.min(n,cfg.n):n;
+ app.innerHTML=`<h1><i class="fa-solid fa-graduation-cap"></i> ${T("title")}</h1><p>${T("sub")}</p><div class="mot"><i class="fa-solid fa-fire"></i> ${L[lang].quotes[qi]}</div><div class="c">
+ <label>${T("paper")}</label><select onchange="cfg.p=this.value;home()">${opt([...Object.keys(D).map(k=>[k,k+" ("+D[k].length+")"]),[ALL,T("mixed")]],cfg.p)}</select>
+ <label>${T("count")}</label><select onchange="cfg.n=+this.value;home()">${opt([[15,"15"],[30,"30"],[60,"60"],[0,T("all")]],cfg.n)}</select>
+ <label>${T("time")}</label><select onchange="cfg.m=+this.value;home()">${opt([10,15,20,30,45,60,90].map(v=>[v,v+" "+T("min")]),cfg.m)}</select>
+ <label class="ck"><input type="checkbox" ${cfg.w?"checked":""} onchange="cfg.w=this.checked;home()"> ${T("weak")}</label>
+ <button class="p" onclick="start()" ${n?"":"disabled"}>${n?`<i class="fa-solid fa-play"></i>${T("start")} (${cnt} ${T("qs")} · ${cfg.m} ${T("min")})`:T("none")}</button>
+ <button onclick="dlPool()" ${n?"":"disabled"}><i class="fa-solid fa-download"></i>${T("dlp")}</button></div>
+ <div class="warn" style="background:var(--card);border-color:var(--bd)"><i class="fa-solid fa-lock"></i> <b>${T("rulesB")}</b> ${T("rulesT")}</div>`}
+function start(){let p=sh(pool());if(cfg.n)p=p.slice(0,cfg.n);
+ S={q:p.map(o=>{const[q,op,a]=o.x,A=[].concat(a);return{id:o.k+"#"+o.i,q,multi:Array.isArray(a),o:sh(op.map((t,j)=>[t,A.includes(j)]))}}),i:0,sel:[],done:[],left:cfg.m*60,tot:cfg.m*60,paper:cfg.p};
+ view="quiz";S.iv=setInterval(()=>{S.left--;tick();if(S.left<=0)finish()},1000);document.body.classList.add("noselect");show()}
+function tick(){const t=document.getElementById("tm"),w=document.getElementById("tw");if(t){t.textContent=fm(S.left);w.className="t"+(S.left<=60?" low":"")}}
+function ok(q,s){if(s===undefined)return false;return q.multi?q.o.every((o,j)=>o[1]===s.includes(j)):q.o[s][1]}
+function show(){const q=S.q[S.i],d=S.done[S.i],s=S.sel[S.i];
+ app.innerHTML=`<div class="top"><span>${S.i+1}/${S.q.length}${q.multi?" · "+T("multi"):""}</span><span id="tw" class="t"><i class="fa-solid fa-clock"></i><span id="tm">${fm(S.left)}</span></span></div><div class="bar"><i style="width:${S.i/S.q.length*100}%"></i></div><div class="c"><p class="q">${e(q.q)}</p>`+
+ q.o.map((o,j)=>{const on=q.multi?(s||[]).includes(j):s===j;let c="";if(d){if(o[1])c="ok";else if(on)c="bad"}else if(on)c="sel";
+  return `<button class="${c}" ${d?"disabled":""} onclick="${q.multi?"tg":"pk"}(${j})">${q.multi?(on?'<i class="fa-solid fa-square-check"></i>':'<i class="fa-regular fa-square"></i>'):"ABCD"[j]+"."} ${e(o[0])}</button>`}).join("")+
+ (q.multi&&!d?`<button class="p" onclick="sub()"><i class="fa-solid fa-paper-plane"></i>${T("submit")}</button>`:"")+
+ (d?`<div class="fb">${ok(q,s)?'<i class="fa-solid fa-circle-check" style="color:var(--ok)"></i> '+T("right"):'<i class="fa-solid fa-circle-xmark" style="color:var(--bad)"></i> '+T("wrong")+e(q.o.filter(o=>o[1]).map(o=>o[0]).join(" | "))}</div><button class="p" onclick="nx()">${S.i+1<S.q.length?T("next")+' <i class="fa-solid fa-arrow-right"></i>':T("fin")+' <i class="fa-solid fa-flag-checkered"></i>'}</button>`:"")+"</div>";tick()}
+function pk(j){S.sel[S.i]=j;S.done[S.i]=true;show()}
+function tg(j){const s=S.sel[S.i]=S.sel[S.i]||[],k=s.indexOf(j);k<0?s.push(j):s.splice(k,1);show()}
+function sub(){if((S.sel[S.i]||[]).length){S.done[S.i]=true;show()}}
+function nx(){S.i++;S.i<S.q.length?show():finish()}
+function finish(why){stop();S.fin=true;document.body.classList.remove("noselect");let sc=0;const bad=[],n=S.q.length,used=S.tot-Math.max(S.left,0);
+ const prev=DB.h.filter(h=>h.p===S.paper).slice(-1)[0];
+ S.q.forEach((q,i)=>{const att=S.done[i],r=att&&ok(q,S.sel[i]);if(r)sc++;else bad.push(i);
+  if(att){const t=DB.s[q.id]=DB.s[q.id]||{r:0,w:0,l:1};r?t.r++:t.w++;t.l=r?1:0}});
+ const pct=Math.round(sc/n*100);Object.assign(S,{sc,pct,bad,used,why,prevPct:prev?prev.pct:null});
+ DB.h.push({t:Date.now(),p:S.paper,sc,n,pct,secs:used,x:why==="tab"?1:0});save();rend()}
+function rend(){const n=S.q.length,pct=S.pct,prev=S.prevPct;view="res";nav(1);
+ const cmp=prev!=null?T("cmp",pn(S.paper),prev,pct,`<span class="${pct>=prev?"up":"dn"}">(${pct>=prev?"+":""}${pct-prev}%)</span>`):T("first");
+ const ans=(q,i)=>S.done[i]?[].concat(S.sel[i]).map(j=>e(q.o[j][0])).join(" | ")||"—":T("skipped");
+ app.innerHTML=`<h1><i class="fa-solid fa-square-poll-vertical"></i> ${T("result")}</h1>${S.why==="tab"?`<div class="warn"><i class="fa-solid fa-triangle-exclamation"></i> ${T("tabw")}</div>`:""}<div class="c"><div class="sc">${S.sc} / ${n}</div><div class="mot" style="text-align:center"><i class="fa-solid fa-star"></i> ${msg(pct)}</div><p style="text-align:center">${pct}% · ${T("tm")} ${fm(S.used)}${S.left<=0?T("timeUp"):""}<br>${cmp}</p></div>`+
+ (S.bad.length?`<h3>${T("bad",S.bad.length)}</h3>`+S.bad.map(i=>{const q=S.q[i];return `<div class="r"><b>${e(q.q)}</b><br>${T("yours")}${ans(q,i)}<br><em>${T("correct")}${e(q.o.filter(o=>o[1]).map(o=>o[0]).join(" | "))}</em></div>`}).join(""):`<p><i class="fa-solid fa-trophy"></i> ${T("perfect")}</p>`)+
+ `<button class="p" onclick="dlResult()"><i class="fa-solid fa-download"></i>${T("dlr")}</button><button class="p" onclick="S=null;start()"><i class="fa-solid fa-rotate-right"></i>${T("again")}</button><button class="p" onclick="S=null;prog()"><i class="fa-solid fa-chart-line"></i>${T("seeProg")}</button><button class="p" onclick="S=null;home()"><i class="fa-solid fa-plus"></i>${T("newQ")}</button>`}
+function chart(H){if(!H.length)return"";const L2=H.slice(-20),W=600,Ht=170,x=i=>L2.length==1?W/2:34+i*(W-50)/(L2.length-1),y=v=>Ht-20-v*(Ht-40)/100;
+ return `<svg viewBox="0 0 ${W} ${Ht}" style="width:100%;height:auto">`+[0,50,100].map(v=>`<line x1="30" x2="${W-10}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--bd)"/><text x="0" y="${y(v)+4}" style="fill:var(--mut);font-size:11px">${v}%</text>`).join("")+
+ `<polyline points="${L2.map((h,i)=>x(i)+","+y(h.pct)).join(" ")}" style="fill:none;stroke:var(--pri);stroke-width:2.5"/>`+L2.map((h,i)=>`<circle cx="${x(i)}" cy="${y(h.pct)}" r="4" style="fill:var(--pri)"><title>${h.pct}% · ${e(pn(h.p))}</title></circle>`).join("")+"</svg>"}
+const avg=a=>a.length?Math.round(a.reduce((s,h)=>s+h.pct,0)/a.length):0;
+function prog(){if(!leave())return;view="prog";nav(2);const H=DB.h.filter(h=>pf===ALL||h.p===pf);
+ let imp=T("impNeed");
+ if(H.length>=2){const k=Math.min(3,Math.floor(H.length/2)),a=avg(H.slice(0,k)),b=avg(H.slice(-k));imp=T("imp",k,a,b,b-a)}
+ const weak=Object.entries(DB.s).filter(([id,s])=>s.l===0&&D[id.split("#")[0]]&&D[id.split("#")[0]][+id.split("#")[1]]).sort((a,b)=>b[1].w-a[1].w).slice(0,10);
+ app.innerHTML=`<h1><i class="fa-solid fa-chart-line"></i> ${T("prog")}</h1><label>${T("pf")}</label><select onchange="pf=this.value;prog()">${opt([[ALL,T("allP")],...Object.keys(D).map(k=>[k,k])],pf)}</select>
+ <div class="c"><div class="g"><div><b>${H.length}</b><span>${T("att")}</span></div><div><b>${avg(H)}%</b><span>${T("avg")}</span></div><div><b>${H.length?Math.max(...H.map(h=>h.pct)):0}%</b><span>${T("best")}</span></div><div><b>${H.length?H[H.length-1].pct:0}%</b><span>${T("last")}</span></div></div>
+ <p style="margin:12px 0 4px;color:var(--tx)">${imp}</p><p style="margin:4px 0 8px;color:var(--tx)"><i class="fa-solid fa-fire" style="color:var(--acc)"></i> ${T("streak",streak())}</p>${chart(H)}</div>`+
+ (H.length?`<h3>${T("recent")}</h3><div class="c"><table><tr><th>${T("date")}</th><th>${T("paper")}</th><th>${T("score")}</th><th>${T("tm")}</th></tr>${H.slice(-10).reverse().map(h=>`<tr><td>${new Date(h.t).toLocaleDateString()}</td><td>${e(pn(h.p))}</td><td>${h.sc}/${h.n} (${h.pct}%)${h.x?' <i class="fa-solid fa-triangle-exclamation" title="Tab switch" style="color:var(--bad)"></i>':""}</td><td>${fm(h.secs)}</td></tr>`).join("")}</table></div>`:"")+
+ (weak.length?`<h3>${T("weakH")}</h3><div class="c">${weak.map(([id,s])=>{const[k,i]=id.split("#");return `<div class="r"><b>${e(D[k][+i][0])}</b><br><span style="color:var(--mut)">${T("wr",s.w,s.r)}</span></div>`}).join("")}<button class="p" onclick="cfg.p='*';cfg.w=true;cfg.n=0;home()"><i class="fa-solid fa-bullseye"></i>${T("pw")}</button><button onclick="dlPool('*',true)"><i class="fa-solid fa-download"></i>${T("dlw")}</button></div>`:"")+
+ `<button class="d" onclick="if(confirm(T('resetC'))){DB={h:[],s:{}};save();prog()}"><i class="fa-solid fa-trash"></i>${T("reset")}</button>`}
+function dlHTML(title,rows,sum){
+ const b=rows.map((r,i)=>`<div class="q"><b>${i+1}. ${e(r.q)}</b>`+r.o.map((o,j)=>`<div class="o ${o[1]?"c":(o[2]?"w":"")}">${"ABCD"[j]}. ${e(o[0])}${o[1]?" \u2714":""}${o[2]?T("yourA"):""}</div>`).join("")+"</div>").join("");
+ const h=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>${e(title)}</title><style>body{font-family:Arial,sans-serif;max-width:780px;margin:24px auto;padding:0 16px;line-height:1.5}h1{font-size:22px}.q{margin:16px 0;page-break-inside:avoid}.q b{display:block;margin-bottom:4px}.o{padding:3px 8px;margin:2px 0;border-radius:6px}.c{background:#dcfce7;border:1px solid #16a34a}.w{background:#fee2e2;border:1px solid #dc2626}button{padding:8px 14px;margin-bottom:10px}@media print{button{display:none}}</style></head><body><button onclick="print()">${T("print")}</button><h1>${e(title)}</h1><p>${sum||""}</p>${b}</body></html>`;
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([h],{type:"text/html"}));a.download=title.replace(/[^\w]+/g,"_")+".html";document.body.appendChild(a);a.click();a.remove()}
+function dlResult(){if(!S)return;dlHTML(T("resT")+pn(S.paper),S.q.map((q,i)=>({q:q.q,o:q.o.map((o,j)=>[o[0],o[1],!!S.done[i]&&[].concat(S.sel[i]).includes(j)])})),T("sumRes",S.sc,S.q.length,S.pct))}
+function dlPool(p=cfg.p,wk=cfg.w){const P=pool(p,wk);if(!P.length)return;dlHTML(pn(p)+(wk?T("weakT"):T("pracT")),P.map(o=>({q:o.x[0],o:o.x[1].map((t,j)=>[t,[].concat(o.x[2]).includes(j),false])})),T("sumPool",P.length))}
+setLabels();home();
+</script></body></html>
